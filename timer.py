@@ -1,5 +1,6 @@
 import rtmidi
 import time
+import sys
 
 
 NOTE_ON = 0x90
@@ -41,16 +42,34 @@ def light_up(position, color):
     midi_port.send_message(message)
 
 
-def count_down(minutes=15):
-    interval = minutes * 60 / 64
+def all_lights_off():
     for i in range(64):
-        light_up(i, COLOR_GREEN_FULL)
-        time.sleep(interval)
+        light_up(i, COLOR_OFF)
+
+
+def count_down():
+    minutes = 15
+    if len(sys.argv) >= 2:
+        try:
+            float(sys.argv[1])
+            minutes = float(sys.argv[1])
+        except ValueError:
+            print(f'\n\"{sys.argv[1]}\" not an integer or a float. Setted default time.') 
+        finally:
+            if minutes <= 1:
+                print(f'\nCounting down {minutes} minute.')
+            else: 
+                print(f'\nCounting down {minutes} minutes.')
+            interval = minutes * 60 / 64
+            for i in range(64):
+                light_up(i, COLOR_GREEN_FULL)
+                time.sleep(interval)
 
 
 if (__name__ == '__main__'):
     # main()
     midi_port = get_port()
-    count_down(7)
+    all_lights_off()
+    count_down()
 else:
     print("wat?", __name__)
