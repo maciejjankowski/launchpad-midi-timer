@@ -47,23 +47,36 @@ def all_lights_off():
         light_up(i, COLOR_OFF)
 
 
+def get_input_from_user():
+    minutes = 0.05
+
+    try:
+        if float(sys.argv[1]) < 0:
+            raise ValueError
+        minutes = float(sys.argv[1])
+    except ValueError:
+        print(f'\n\"{sys.argv[1]}\" not a positive number. '+
+                   '\nSetted default time.')
+    except IndexError:
+        print(f'\nSetted default time.')
+    finally:
+        if minutes <= 1:
+            print(f'\nCounting down {minutes} minute.\n')
+        else: 
+            print(f'\nCounting down {minutes} minutes.\n')
+        
+    return minutes
+
+
 def count_down():
-    minutes = 15
-    if len(sys.argv) >= 2:
+    minutes = get_input_from_user()
+    interval = minutes * 60 / 64
+    for i in range(64):
+        light_up(i, COLOR_GREEN_FULL)
         try:
-            float(sys.argv[1])
-            minutes = float(sys.argv[1])
-        except ValueError:
-            print(f'\n\"{sys.argv[1]}\" not an integer or a float. Setted default time.') 
-        finally:
-            if minutes <= 1:
-                print(f'\nCounting down {minutes} minute.')
-            else: 
-                print(f'\nCounting down {minutes} minutes.')
-            interval = minutes * 60 / 64
-            for i in range(64):
-                light_up(i, COLOR_GREEN_FULL)
-                time.sleep(interval)
+            time.sleep(interval)
+        except KeyboardInterrupt:
+            sys.exit()
 
 
 if (__name__ == '__main__'):
